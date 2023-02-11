@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Upload an image to detect the shoes in the image</title>
+    <style>
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .content {
+        text-align: center;
+        width: 50%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        padding: 20px;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      #image-container {
+        width: 100%;
+        height: 50%;
+        overflow: hidden;
+        text-align: center;
+        margin: 20px 0;
+      }
+
+      #image-container img {
+        max-width: 100%;
+        height: auto;
+        display: inline-block;
+      }
+      body {
+        background-image: url("https://images.complex.com/complex/images/c_fill,dpr_auto,f_auto,q_auto,w_1400/fl_lossy,pg_1/ftgznczho81gcmmuk0ev/tye-engmann-curatedvan?fimg-ssr");
+        background-size: cover;
+        background-position: center;
+        overflow: hidden;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 18px;
+        font-weight: bold;
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        box-shadow: 2px 2px 8px #333;
+        margin: 50px;
+      }
+
+      button:hover {
+        background-color: #2980b9;
+      }
+
+      input[type="file"] {
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1;
+      }
+
+      input[type="file"] + label {
+        margin: 50px;
+
+        padding: 10px 20px;
+        font-size: 18px;
+        font-weight: bold;
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        box-shadow: 2px 2px 8px #333;
+      }
+
+      input[type="file"] + label:hover {
+        background-color: #2980b9;
+      }
+
+      .content h1 {
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="content">
+        <h1>Upload an image to detect the shoes in the image</h1>
+        <form id="upload-form">
+          <input type="file" id="input-image" />
+          <label for="input-image">Choose image</label>
+          <button type="submit">Detect</button>
+        </form>
+        <div id="image-container">
+          <!-- Displayed image will be inserted here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+      $(document).ready(function () {
+        // Handle form submission
+        $("#upload-form").submit(function (event) {
+          event.preventDefault();
+
+          // Get the selected file
+          var inputImage = $("#input-image")[0].files[0];
+
+          // Check if a file is selected
+          if (!inputImage) {
+            alert("Please select an image to upload.");
+            return;
+          }
+
+          // Get the file content in base64 format
+          var reader = new FileReader();
+          reader.readAsDataURL(inputImage);
+          reader.onload = function () {
+            var imageData = reader.result;
+
+            // Use Axios to send the image data to API
+            axios({
+              method: "post",
+              url: "https://functionsr10.azurewebsites.net/api/ppcf?code=pYUsMTlTEX6wuQC4hIr0ySyNH3syHwAwEYy2KywqxgHYAzFuXWzE3Q==",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              crossdomain: true,
+              data: {
+                image: imageData,
+              },
+            })
+              .then((response) => {
+                // Display the processed image
+                $("#image-container").html(
+                  "<img src=data:image/jpeg;base64," + response.data + ">"
+                );
+              })
+              .catch((error) => {
+                console.error(error);
+                alert("An error occurred while processing the image.");
+              });
+          };
+        });
+      });
+    </script>
+  </body>
+</html>
