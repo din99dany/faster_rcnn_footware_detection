@@ -5,7 +5,7 @@
 ```mermaid
     graph LR;
 
-        subgraph TRAIN
+        subgraph Train-Plane
             direction LR;
             DataSet[(Dataset)] --> PytorchModel
             subgraph GPU-Cluster
@@ -14,8 +14,7 @@
             PytorchModel -->|Save model| ModelStorage[(Model Storage)]
         end
 
-
-        subgraph Application        
+        subgraph Application-Plane        
             subgraph Kubernetes-Cluster
                 PytorchModel -->|Deploy| API1(Api Endpoint)
                 PytorchModel --> API2(Api Endpoint)
@@ -27,10 +26,11 @@
             AzureFrontEnd(Azure Function \n Front End) -->|Request| TrafficExperimentSplit[Experiment \n traffic split]
         end
 
-        subgraph Analytics
+        subgraph Analytics-Plane
             Kubernetes-Cluster --> MetricDataStore[(Metrics)]
             NewDataSet[(New Dataset)]
         end
+        
         User --> AzureFrontEnd
         User -->|Feedback| NewDataSet
         NewDataSet -->|Update| DataSet
